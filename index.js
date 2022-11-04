@@ -23,10 +23,12 @@ async function run(){
         const bookCollection = client.db("eduCenterCtg").collection("books");
 
         app.get('/books', async(req, res)=>{
+            const page = parseInt(req.query.page);
+            const size = parseInt(req.query.size);
             const query = {};
             const cursor = bookCollection.find(query);
             const count = await bookCollection.estimatedDocumentCount();
-            const books = await cursor.toArray();
+            const books = await cursor.skip(page * size).limit(size).toArray();
             res.send({count ,books})
         })
     }
